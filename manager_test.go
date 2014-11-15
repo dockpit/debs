@@ -1,4 +1,4 @@
-package tool_test
+package debs_test
 
 import (
 	"io/ioutil"
@@ -17,7 +17,7 @@ func TestInstall(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	m := tool.NewManager(dir)
+	m := debs.NewManager(dir)
 
 	err = m.Install("github.com/golang/example")
 	if err != nil {
@@ -54,7 +54,7 @@ func TestUpsert(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	m := tool.NewManager(dir)
+	m := debs.NewManager(dir)
 
 	err = m.Upsert("github.com/golang/example")
 	if err != nil {

@@ -1,4 +1,4 @@
-package tool
+package debs
 
 type Manager struct {
 	Dir string
