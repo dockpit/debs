@@ -47,6 +47,23 @@ func TestInstall(t *testing.T) {
 	assert.Equal(t, nil, err)
 }
 
+func TestLocate(t *testing.T) {
+
+	dir, err := ioutil.TempDir("", "dockpit_test")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	m := debs.NewManager(dir)
+
+	loc, err := m.Locate("github.com/golang/example")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, filepath.Join(dir, "deps", "github.com", "golang", "example"), loc)
+}
+
 func TestUpsert(t *testing.T) {
 
 	dir, err := ioutil.TempDir("", "dockpit_test")

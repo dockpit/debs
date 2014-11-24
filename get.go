@@ -12,9 +12,7 @@ import (
 	"strings"
 )
 
-// downloadPackage runs the create or download command
-// to make the first copy of or update a copy of the given package.
-func DownloadPackage(p *Package, to string, update bool) error {
+func ExpandPackage(p *Package, to string) (*vcsCmd, string, string, string, error) {
 	var (
 		vcs            *vcsCmd
 		repo, rootPath string
@@ -24,7 +22,7 @@ func DownloadPackage(p *Package, to string, update bool) error {
 		// Directory exists.  Look for checkout along path to src.
 		vcs, rootPath, err = vcsForDir(p)
 		if err != nil {
-			return err
+			return nil, "", "", "", err
 		}
 		repo = "<local>" // should be unused; make distinctive
 	} else {
@@ -32,7 +30,7 @@ func DownloadPackage(p *Package, to string, update bool) error {
 		// repository, and the import path for the root of the repository.
 		rr, err := repoRootForImportPath(p.ImportPath)
 		if err != nil {
-			return err
+			return nil, "", "", "", err
 		}
 		vcs, repo, rootPath = rr.vcs, rr.repo, rr.root
 	}
@@ -41,12 +39,25 @@ func DownloadPackage(p *Package, to string, update bool) error {
 		// Package not found.  Put in first directory of $GOPATH.
 		list := filepath.SplitList(to)
 		if len(list) == 0 {
-			return fmt.Errorf("cannot download, $GOPATH not set. For more details see: go help gopath")
+			return nil, "", "", "", fmt.Errorf("cannot download, $GOPATH not set. For more details see: go help gopath")
 		}
 
 		p.SrcRoot = filepath.Join(list[0], "deps")
 	}
+
 	root := filepath.Join(p.SrcRoot, rootPath)
+
+	return vcs, repo, rootPath, root, err
+}
+
+// downloadPackage runs the create or download command
+// to make the first copy of or update a copy of the given package.
+func DownloadPackage(p *Package, to string, update bool) error {
+
+	vcs, repo, rootPath, root, err := ExpandPackage(p, to)
+	if err != nil {
+		return err
+	}
 
 	if buildV {
 		fmt.Fprintf(os.Stderr, "%s (download)\n", rootPath)
