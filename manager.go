@@ -1,5 +1,11 @@
 package debs
 
+import (
+	"io"
+	"log"
+	"os"
+)
+
 type Manager struct {
 	Dir string
 }
@@ -12,8 +18,49 @@ func NewManager(dir string) *Manager {
 	}
 }
 
-// install the dependency but if it already exists, do nothing
-func (m *Manager) Install(ipath string) error {
+var stdo = os.Stdout
+var stde = os.Stderr
+
+func (m *Manager) captureOutput(w io.Writer) (rerr error) {
+	log.SetOutput(w)
+
+	//stdout
+	stdo = os.Stdout
+	fr, fw, err := os.Pipe()
+	if err != nil {
+		return err
+	}
+	os.Stdout = fw
+	go func() {
+		_, rerr = io.Copy(w, fr)
+	}()
+
+	//stderr
+	stde = os.Stderr
+	fre, fwe, err := os.Pipe()
+	if err != nil {
+		return err
+	}
+	os.Stderr = fwe
+	go func() {
+		_, rerr = io.Copy(w, fre)
+	}()
+
+	return nil
+}
+
+func (m *Manager) restoreOutput() {
+	os.Stdout = stdo
+	os.Stderr = stde
+	log.SetOutput(os.Stdout)
+}
+
+// install the dependency but if it already exists, do nothing,
+// stdout is replaced by a stream we control, @todo this is not
+// very elegant
+func (m *Manager) Install(ipath string, w io.Writer) error {
+	m.captureOutput(w)
+	defer m.restoreOutput()
 
 	//create package
 	p := NewPackage(ipath)
@@ -38,7 +85,9 @@ func (m *Manager) Locate(ipath string) (string, error) {
 }
 
 // update the dependency, if its not installed install
-func (m *Manager) Upsert(ipath string) error {
+func (m *Manager) Upsert(ipath string, w io.Writer) error {
+	m.captureOutput(w)
+	defer m.restoreOutput()
 
 	//create package
 	p := NewPackage(ipath)

@@ -1,6 +1,7 @@
 package debs_test
 
 import (
+	"bytes"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
@@ -11,7 +12,7 @@ import (
 )
 
 func TestInstall(t *testing.T) {
-
+	buff := bytes.NewBuffer(nil)
 	dir, err := ioutil.TempDir("", "dockpit_test")
 	if err != nil {
 		t.Fatal(err)
@@ -19,7 +20,7 @@ func TestInstall(t *testing.T) {
 
 	m := debs.NewManager(dir)
 
-	err = m.Install("github.com/golang/example")
+	err = m.Install("github.com/golang/example", buff)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,13 +39,14 @@ func TestInstall(t *testing.T) {
 	}
 
 	//another call to install
-	err = m.Install("github.com/golang/example")
+	err = m.Install("github.com/golang/example", buff)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// should not throw error since no git interaction is expected
 	assert.Equal(t, nil, err)
+	assert.Contains(t, buff.String(), "git")
 }
 
 func TestLocate(t *testing.T) {
@@ -65,7 +67,7 @@ func TestLocate(t *testing.T) {
 }
 
 func TestUpsert(t *testing.T) {
-
+	buff := bytes.NewBuffer(nil)
 	dir, err := ioutil.TempDir("", "dockpit_test")
 	if err != nil {
 		t.Fatal(err)
@@ -73,7 +75,7 @@ func TestUpsert(t *testing.T) {
 
 	m := debs.NewManager(dir)
 
-	err = m.Upsert("github.com/golang/example")
+	err = m.Upsert("github.com/golang/example", buff)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -92,7 +94,7 @@ func TestUpsert(t *testing.T) {
 	}
 
 	//another call to Upsert
-	err = m.Upsert("github.com/golang/example")
+	err = m.Upsert("github.com/golang/example", buff)
 
 	// should throw error since git interaction is expected
 	assert.NotEqual(t, nil, err)
