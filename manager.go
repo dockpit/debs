@@ -1,4 +1,4 @@
-package debs
+package deps
 
 import (
 	"io"

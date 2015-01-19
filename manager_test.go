@@ -1,4 +1,4 @@
-package debs_test
+package deps_test
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/dockpit/debs"
+	"github.com/dockpit/deps"
 )
 
 func TestInstall(t *testing.T) {
@@ -18,7 +18,7 @@ func TestInstall(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	m := debs.NewManager(dir)
+	m := deps.NewManager(dir)
 
 	err = m.Install("github.com/golang/example", buff)
 	if err != nil {
@@ -56,7 +56,7 @@ func TestLocate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	m := debs.NewManager(dir)
+	m := deps.NewManager(dir)
 
 	loc, err := m.Locate("github.com/golang/example")
 	if err != nil {
@@ -73,7 +73,7 @@ func TestUpsert(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	m := debs.NewManager(dir)
+	m := deps.NewManager(dir)
 
 	err = m.Upsert("github.com/golang/example", buff)
 	if err != nil {

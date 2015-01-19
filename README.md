@@ -1,4 +1,4 @@
-# dockpit/debs
+# dockpit/deps
 A library that wraps the go tool version control download logic. It allows for the downloading of version controlled packages using go-like import path syntax:
 
 ```Go
