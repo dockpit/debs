@@ -26,14 +26,14 @@ func TestInstall(t *testing.T) {
 	}
 
 	//check if we can open it
-	fname := filepath.Join(dir, "deps", "github.com", "golang", "example", "LICENSE")
+	fname := filepath.Join(dir, "github.com", "golang", "example", "LICENSE")
 	_, err = ioutil.ReadFile(fname)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	//corrupt the git repository
-	err = ioutil.WriteFile(filepath.Join(dir, "deps", "github.com", "golang", "example", ".git", "HEAD"), []byte("a"), 0777)
+	err = ioutil.WriteFile(filepath.Join(dir, "github.com", "golang", "example", ".git", "HEAD"), []byte("a"), 0777)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -63,7 +63,7 @@ func TestLocate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, filepath.Join(dir, "deps", "github.com", "golang", "example"), loc)
+	assert.Equal(t, filepath.Join(dir, "github.com", "golang", "example"), loc)
 }
 
 func TestUpsert(t *testing.T) {
@@ -81,14 +81,14 @@ func TestUpsert(t *testing.T) {
 	}
 
 	//check if we can open it
-	fname := filepath.Join(dir, "deps", "github.com", "golang", "example", "LICENSE")
+	fname := filepath.Join(dir, "github.com", "golang", "example", "LICENSE")
 	_, err = ioutil.ReadFile(fname)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	//corrupt the git repository
-	err = ioutil.WriteFile(filepath.Join(dir, "deps", "github.com", "golang", "example", ".git", "HEAD"), []byte("a"), 0777)
+	err = ioutil.WriteFile(filepath.Join(dir, "github.com", "golang", "example", ".git", "HEAD"), []byte("a"), 0777)
 	if err != nil {
 		t.Fatal(err)
 	}

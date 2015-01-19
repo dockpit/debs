@@ -42,7 +42,7 @@ func ExpandPackage(p *Package, to string) (*vcsCmd, string, string, string, erro
 			return nil, "", "", "", fmt.Errorf("cannot download, $GOPATH not set. For more details see: go help gopath")
 		}
 
-		p.SrcRoot = filepath.Join(list[0], "deps")
+		p.SrcRoot = list[0]
 	}
 
 	root := filepath.Join(p.SrcRoot, rootPath)
